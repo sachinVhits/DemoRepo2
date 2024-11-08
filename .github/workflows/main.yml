@@ -1,0 +1,66 @@
+# .github/workflows/main.yml
+
+name: CI for PRs
+
+on:
+  pull_request:
+    branches:
+      - [**]  # Trigger the workflow when there is a PR to the main branch
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint to check code quality
+        run: npm run lint
+
+      - name: Run Prettier to check code formatting
+        run: npm run format -- --check
+
+      - name: Run Tests (if applicable)
+        run: npm test  # Replace with your actual testing command
+
+  code-refactor:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint fix to auto-correct issues
+        run: npm run lint:fix
+
+      - name: Run Prettier fix to auto-correct formatting issues
+        run: npm run format
+
+      - name: Commit and push fixes if any
+        run: |
+          git config --global user.name "sachinVhits"
+          git config --global user.email "mailto:sachinchoudhary.vhits@gmail.com"
+          git add .
+          git commit -m "Auto-fix: Lint and Prettier fixes" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
