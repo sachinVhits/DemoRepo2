@@ -5,7 +5,7 @@ name: CI for PRs
 on:
   pull_request:
     branches:
-      - **  # Trigger the workflow when there is a PR to the main branch
+      - '*'  # Trigger the workflow when there is a PR to the main branch
 
 jobs:
   lint-and-test:
@@ -57,7 +57,7 @@ jobs:
       - name: Commit and push fixes if any
         run: |
           git config --global user.name "sachinVhits"
-          git config --global user.email "mailto:sachinchoudhary.vhits@gmail.com"
+          git config --global user.email "sachinchoudhary.vhits@gmail.com"
           git add .
           git commit -m "Auto-fix: Lint and Prettier fixes" || echo "No changes to commit"
           git push
